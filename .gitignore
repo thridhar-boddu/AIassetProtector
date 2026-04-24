@@ -1,0 +1,36 @@
+# ─── Secrets ────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.*.local
+# Keep templates
+!.env.example
+
+# ─── Java / Maven ────────────────────────────────────────────
+backend/target/
+*.class
+*.jar
+!backend/.mvn/wrapper/maven-wrapper.jar
+
+# ─── Python ──────────────────────────────────────────────────
+ai-service/__pycache__/
+ai-service/*.pyc
+ai-service/.venv/
+ai-service/venv/
+
+# ─── Node / Vite ─────────────────────────────────────────────
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.vite/
+
+# ─── OS / Editor ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.suo
+*.swp
+.vscode/
+.idea/
+
+#-----node_modules_not_needed-----------
+#--can build with "npm install command"
+/dashboard/node_modules/
