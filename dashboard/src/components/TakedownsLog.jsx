@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, ChevronDown, ChevronUp, ExternalLink, Trash2 } from 'lucide-react';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const TakedownsLog = ({ topic }) => {
   const [takedowns, setTakedowns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ const TakedownsLog = ({ topic }) => {
   const fetchTakedowns = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/protection/takedowns?topic=${encodeURIComponent(topic)}`);
+      const res = await fetch(`${API_BASE}/api/protection/takedowns?topic=${encodeURIComponent(topic)}`);
       const data = await res.json();
       setTakedowns(data);
     } catch (e) {

@@ -34,6 +34,10 @@ const data = [
   { name: '23:59', matches: 34, violations: 43 },
 ];
 
+// In production (Vercel), VITE_API_URL = https://assetguardian-backend.onrender.com
+// In development, it's empty so relative paths go through the Vite proxy
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const App = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentTopic, setCurrentTopic] = useState('All Assets');
@@ -53,11 +57,11 @@ const App = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const statsRes = await fetch(`/api/protection/stats?topic=${currentTopic}`);
+        const statsRes = await fetch(`${API_BASE}/api/protection/stats?topic=${currentTopic}`);
         const statsData = await statsRes.json();
         setStats(statsData);
 
-        const detectionsRes = await fetch(`/api/protection/detections?topic=${currentTopic}`);
+        const detectionsRes = await fetch(`${API_BASE}/api/protection/detections?topic=${currentTopic}`);
         const detectionsData = await detectionsRes.json();
         setDetections(detectionsData);
       } catch (err) {
@@ -75,7 +79,7 @@ const App = () => {
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const res = await fetch('/api/protection/trending');
+        const res = await fetch(`${API_BASE}/api/protection/trending`);
         const data = await res.json();
         setTrending(data);
       } catch (err) {
