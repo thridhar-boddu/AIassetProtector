@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Get Gemini API key: https://aistudio.google.com/app/apikey (free)
 const ENV_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
-const GEMINI_MODEL = 'gemini-1.5-flash';  // Free tier: 15 RPM, 1500 req/day
+const GEMINI_MODEL = 'gemini-2.5-flash-preview-04-17';  // Current recommended free model (2026)
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const GeminiAssistant = ({ analysisData }) => {
