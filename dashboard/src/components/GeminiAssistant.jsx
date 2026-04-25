@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Get Gemini API key: https://aistudio.google.com/app/apikey (free)
 const ENV_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
-const DEFAULT_MODEL = 'gemini-1.5-flash-latest';
+const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 const GeminiAssistant = ({ analysisData }) => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || ENV_KEY);
@@ -174,11 +174,11 @@ Guidelines:
                 onChange={(e) => setModel(e.target.value)}
                 style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--glass-border)', color: 'white' }}
               >
-                <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash Latest</option>
-                <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro Latest</option>
-                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                <option value="gemini-pro">Gemini Pro (Legacy)</option>
-                <option value="gemini-2.5-flash-preview-04-17">Gemini 2.5 Flash Preview</option>
+                <option value="gemini-2.5-flash">Gemini 2.5 Flash (Stable)</option>
+                <option value="gemini-flash-latest">Gemini Flash Latest</option>
+                <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+                <option value="gemini-3-flash-preview">Gemini 3 Flash Preview</option>
+                <option value="gemini-2.5-pro">Gemini 2.5 Pro (Stable)</option>
               </select>
               <button
                 type="submit"
