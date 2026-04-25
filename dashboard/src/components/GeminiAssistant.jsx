@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Get Gemini API key: https://aistudio.google.com/app/apikey (free)
 const ENV_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
-const GEMINI_MODEL = 'gemini-2.5-flash-preview-04-17';  // Current recommended free model (2026)
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const DEFAULT_MODEL = 'gemini-1.5-flash-latest';
 
 const GeminiAssistant = ({ analysisData }) => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || ENV_KEY);
+  const [model, setModel] = useState(localStorage.getItem('gemini_model') || DEFAULT_MODEL);
   const [isLocked, setIsLocked] = useState(!(localStorage.getItem('gemini_api_key') || ENV_KEY));
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
@@ -27,8 +27,10 @@ const GeminiAssistant = ({ analysisData }) => {
     setErrorInfo('');
 
     try {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+      
       // Validate by making a real minimal Gemini request
-      const res = await fetch(`${GEMINI_URL}?key=${cleanKey}`, {
+      const res = await fetch(`${geminiUrl}?key=${cleanKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -42,6 +44,7 @@ const GeminiAssistant = ({ analysisData }) => {
       }
 
       localStorage.setItem('gemini_api_key', cleanKey);
+      localStorage.setItem('gemini_model', model);
       setIsLocked(false);
       setShowKeyDialog(false);
       setMessages(prev => [...prev, {
@@ -85,7 +88,8 @@ Guidelines:
     history.push({ role: 'user', parts: [{ text: currentInput }] });
 
     try {
-      const res = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+      const res = await fetch(`${geminiUrl}?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -125,7 +129,7 @@ Guidelines:
           <MessageSquare size={24} className="gradient-text" />
           <div>
             <h3 style={{ margin: 0 }}>Gemini Sentinel Assistant</h3>
-            <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>Powered by Google Gemini {GEMINI_MODEL}</span>
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>Powered by Google Gemini ({model})</span>
           </div>
         </div>
         <button
@@ -165,6 +169,17 @@ Guidelines:
                 onChange={(e) => setApiKey(e.target.value)}
                 style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--glass-border)', color: 'white' }}
               />
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--glass-border)', color: 'white' }}
+              >
+                <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash Latest</option>
+                <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro Latest</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                <option value="gemini-pro">Gemini Pro (Legacy)</option>
+                <option value="gemini-2.5-flash-preview-04-17">Gemini 2.5 Flash Preview</option>
+              </select>
               <button
                 type="submit"
                 disabled={loading}
