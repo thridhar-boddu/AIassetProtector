@@ -5,10 +5,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 // Get Gemini API key: https://aistudio.google.com/app/apikey (free)
 const ENV_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
+const VALID_MODELS = [
+  'gemini-2.5-flash',
+  'gemini-flash-latest',
+  'gemini-3.1-pro-preview',
+  'gemini-3-flash-preview',
+  'gemini-2.5-pro'
+];
+
+const getInitialModel = () => {
+  const saved = localStorage.getItem('gemini_model');
+  return VALID_MODELS.includes(saved) ? saved : DEFAULT_MODEL;
+};
 
 const GeminiAssistant = ({ analysisData }) => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || ENV_KEY);
-  const [model, setModel] = useState(localStorage.getItem('gemini_model') || DEFAULT_MODEL);
+  const [model, setModel] = useState(getInitialModel());
   const [isLocked, setIsLocked] = useState(!(localStorage.getItem('gemini_api_key') || ENV_KEY));
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
