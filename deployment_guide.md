@@ -12,7 +12,8 @@
 | Database | H2 (in-memory, lost on restart) | **PostgreSQL** via `DATABASE_URL` env var |
 | CORS | Hardcoded `localhost` | `ALLOWED_ORIGINS` env var (comma-separated) |
 | AI Service | Hardcoded `host=0.0.0.0 port=8000` | `HOST` / `PORT` env vars + CORS middleware |
-| Groq API Key | User must paste manually every time | `VITE_GROQ_API_KEY` env var pre-populates it |
+| Gemini API Key | User must paste manually every time | `VITE_GEMINI_API_KEY` env var pre-populates it |
+| Gemini Model | Hardcoded string, broke on deprecation | Dynamic dropdown defaulting to `gemini-2.5-flash` with localStorage validation |
 | Vite proxy | Hardcoded `localhost:8080` | `VITE_API_URL` env var |
 | Secrets safety | No `.gitignore` for `.env` | Root `.gitignore` blocks all `.env*` (keeps `.env.example`) |
 
@@ -70,7 +71,7 @@ ALLOWED_ORIGINS   https://your-backend.onrender.com
 3. Add **Environment Variables** in Vercel project settings:
 
 ```
-VITE_GROQ_API_KEY   gsk_xxxxxxxxxxxxxxxxxxxx   (your Groq key)
+VITE_GEMINI_API_KEY   AIza_your_gemini_key_here   (your Gemini key)
 VITE_API_URL        https://your-backend.onrender.com
 ```
 
@@ -100,7 +101,7 @@ python main.py
 
 # 3. Dashboard
 cd ..\dashboard
-copy .env.example .env.local   # fill in VITE_GROQ_API_KEY
+copy .env.example .env.local   # fill in VITE_GEMINI_API_KEY
 npm install && npm run dev
 ```
 
@@ -129,7 +130,7 @@ npm install && npm run dev
 | Variable | Required | Description |
 |---|---|---|
 | `VITE_API_URL` | local dev | Vite proxy target; defaults to `localhost:8080` |
-| `VITE_GROQ_API_KEY` | optional | Pre-populates the AI assistant — skip for manual entry |
+| `VITE_GEMINI_API_KEY` | optional | Pre-populates the AI assistant — skip for manual entry |
 
 ---
 
