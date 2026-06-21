@@ -5,7 +5,7 @@
     "dashboard:dev": "npm run dev --prefix dashboard",
     "dashboard:build": "npm run build --prefix dashboard",
     "ai:run": "cd ai-service && python main.py",
-    "backend:run": "cd backend && ./mvnw spring-boot:run",
+    "backend:run": "cd backend && python main.py",
     "dev": "npm run dashboard:dev"
   }
 }

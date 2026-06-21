@@ -21,37 +21,34 @@
 
 ## Step 1 — Free PostgreSQL Database (Neon.tech)
 
-1. Go to [neon.tech](https://neon.tech) → **New Project**
-2. Copy the **Connection string** (looks like `postgresql://user:pass@host/dbname?sslmode=require`)
-3. Use this standard URL format directly for Python (no JDBC prefix required)
----
+> [!NOTE]
+> The current Python backend uses PostgreSQL configuration environment variables for compatibility but runs in a simulated/mock database mode (mocking operations on live scoreboards and fake database persistence). You can configure a real database URL for logging compatibility, but it will not run migrations or fail to start if you supply mock values.
 
+1. Go to [neon.tech](https://neon.tech) → **New Project**
+2. Copy the **Connection string** (which looks like `postgresql://user:pass@host/dbname?sslmode=require`).
+3. You will use this standard PostgreSQL URL format directly in the environment variables (no `jdbc:` prefix required).
+
+---
 
 ## Step 2 — Deploy Python Backend (Render)
 
-### Option A: Redeploy Existing Render Service (Recommended)
-1. Go to your **Render Dashboard**, select the existing backend service.
-2. Go to **Settings** and update:
-   - **Build command**: `pip install -r requirements.txt`
-   - **Start command**: `python main.py` or `uvicorn main:app --host 0.0.0.0 --port $PORT`
-3. If your `DATABASE_URL` currently has a `jdbc:` prefix, remove it to restore the standard `postgresql://` protocol format.
-4. Render will build and redeploy the app once the new Python code is pushed to GitHub.
+Deploy the backend as a fresh service on Render:
 
-### Option B: Delete and Recreate Render Service
-1. Go to your **Render Dashboard** → click your backend Web Service.
-2. Go to **Settings** → scroll to the bottom → click **Delete Web Service**.
-3. [render.com](https://render.com) → **New Web Service** → connect repo → set:
-   - **Root directory**: `backend`
-   - **Build command**: `pip install -r requirements.txt`
-   - **Start command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Add **Environment Variables** in Render dashboard:
+1. Log in to [render.com](https://render.com) and click **New** → **Web Service**.
+2. Connect your GitHub repository.
+3. Configure the service details:
+   - **Name**: `asset-guardian-backend`
+   - **Root Directory**: `backend`
+   - **Environment**: `Python 3` (or `Docker`, as the project includes a `Dockerfile` in the root of the backend directory)
+   - **Build Command**: `pip install -r requirements.txt` (only needed if using Python environment)
+   - **Start Command**: `python main.py` (or `uvicorn main:app --host 0.0.0.0 --port $PORT` if configuring manually)
+4. Add **Environment Variables** under the **Advanced** section:
 
-```
+```env
 DATABASE_URL      postgresql://<neon-host>/<dbname>?sslmode=require
 DB_USERNAME       <neon-user>
 DB_PASSWORD       <neon-password>
 ALLOWED_ORIGINS   https://your-frontend.vercel.app
-PORT              (Render sets this automatically — leave blank)
 AI_SERVICE_URL    https://your-ai-service.onrender.com
 ```
 
@@ -144,5 +141,5 @@ npm install && npm run dev
 
 ---
 
-> [!WARNING]
-> Spring Boot's `spring.jpa.hibernate.ddl-auto=update` will auto-create tables on first run. For production beyond the demo, switch to `validate` and use Flyway migrations.
+> [!TIP]
+> The backend runs statelessly out of the box using mock data models. For a production release, you can easily integrate PostgreSQL or another storage provider using standard Python database drivers (e.g. SQLAlchemy, Tortoise ORM, or psycopg2).
