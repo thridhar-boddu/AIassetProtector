@@ -1,22 +1,16 @@
-# ── Stage 1: Build ──────────────────────────────────────────────────────────
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM python:3.11-slim
+
 WORKDIR /app
 
-# Cache dependencies first (only re-downloads when pom.xml changes)
-COPY pom.xml .
-RUN mvn dependency:go-offline -q
+# Cache dependencies first (only re-installs when requirements.txt changes)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source and build the fat JAR
-COPY src ./src
-RUN mvn clean package -DskipTests -q
+# Copy backend files
+COPY . .
 
-# ── Stage 2: Run ─────────────────────────────────────────────────────────────
-FROM eclipse-temurin:21-jre-jammy
-WORKDIR /app
-
-COPY --from=build /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
-
-# Render injects PORT automatically; Spring Boot reads it via server.port=${PORT:8080}
+# Render/Railway injects PORT environment variable automatically
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Start command
+CMD ["python", "main.py"]

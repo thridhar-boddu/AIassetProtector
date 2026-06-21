@@ -23,21 +23,31 @@
 
 1. Go to [neon.tech](https://neon.tech) → **New Project**
 2. Copy the **Connection string** (looks like `postgresql://user:pass@host/dbname?sslmode=require`)
-3. Change the scheme to `jdbc:postgresql://...` (drop the `postgresql://` prefix → add `jdbc:` prefix)
+3. Use this standard URL format directly for Python (no JDBC prefix required)
 ---
 
 
-## Step 2 — Deploy Java Backend (Render)
+## Step 2 — Deploy Python Backend (Render)
 
-1. Push your code to GitHub
-2. [render.com](https://render.com) → **New Web Service** → connect repo → set:
+### Option A: Redeploy Existing Render Service (Recommended)
+1. Go to your **Render Dashboard**, select the existing backend service.
+2. Go to **Settings** and update:
+   - **Build command**: `pip install -r requirements.txt`
+   - **Start command**: `python main.py` or `uvicorn main:app --host 0.0.0.0 --port $PORT`
+3. If your `DATABASE_URL` currently has a `jdbc:` prefix, remove it to restore the standard `postgresql://` protocol format.
+4. Render will build and redeploy the app once the new Python code is pushed to GitHub.
+
+### Option B: Delete and Recreate Render Service
+1. Go to your **Render Dashboard** → click your backend Web Service.
+2. Go to **Settings** → scroll to the bottom → click **Delete Web Service**.
+3. [render.com](https://render.com) → **New Web Service** → connect repo → set:
    - **Root directory**: `backend`
-   - **Build command**: `./mvnw clean package -DskipTests`
-   - **Start command**: `java -jar target/backend-0.0.1-SNAPSHOT.jar`
-3. Add **Environment Variables** in Render dashboard:
+   - **Build command**: `pip install -r requirements.txt`
+   - **Start command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. Add **Environment Variables** in Render dashboard:
 
 ```
-DATABASE_URL      jdbc:postgresql://<neon-host>/<dbname>?sslmode=require
+DATABASE_URL      postgresql://<neon-host>/<dbname>?sslmode=require
 DB_USERNAME       <neon-user>
 DB_PASSWORD       <neon-password>
 ALLOWED_ORIGINS   https://your-frontend.vercel.app
@@ -60,7 +70,7 @@ ALLOWED_ORIGINS   https://your-backend.onrender.com
 ```
 
 > [!NOTE]
-> The AI service only needs to allow calls from the **Java backend**, not the frontend directly.
+> The AI service only needs to allow calls from the **Python backend**, not the frontend directly.
 
 ---
 
@@ -112,7 +122,7 @@ npm install && npm run dev
 ### Backend (`backend/.env.example`)
 | Variable | Required | Description |
 |---|---|---|
-| `DATABASE_URL` | ✅ | JDBC PostgreSQL connection string |
+| `DATABASE_URL` | ✅ | Standard PostgreSQL connection string |
 | `DB_USERNAME` | ✅ | Database user |
 | `DB_PASSWORD` | ✅ | Database password |
 | `ALLOWED_ORIGINS` | ✅ | Comma-separated frontend URLs for CORS |

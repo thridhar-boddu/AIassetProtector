@@ -6,12 +6,6 @@
 # Keep templates
 !.env.example
 
-# ─── Java / Maven ────────────────────────────────────────────
-backend/target/
-*.class
-*.jar
-!backend/.mvn/wrapper/maven-wrapper.jar
-
 # ─── Python ──────────────────────────────────────────────────
 ai-service/__pycache__/
 ai-service/*.pyc

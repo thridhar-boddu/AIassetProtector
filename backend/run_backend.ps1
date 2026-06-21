@@ -1,8 +1,8 @@
 # ============================================================
-# AssetGuardian Backend — Local Development Runner
+# AssetGuardian Backend — Local Development Runner (Python)
 # ============================================================
 # Required environment variables (set in your shell or .env):
-#   DATABASE_URL      e.g. jdbc:postgresql://localhost:5432/assetguardian
+#   DATABASE_URL      e.g. postgresql://localhost:5432/assetguardian
 #   DB_USERNAME       e.g. postgres
 #   DB_PASSWORD       e.g. secret
 #   ALLOWED_ORIGINS   e.g. http://localhost:5173
@@ -20,15 +20,17 @@ foreach ($var in $required) {
     }
 }
 
-# Setup Maven Wrapper if missing
-if (!(Test-Path ".mvn\wrapper\maven-wrapper.jar")) {
-    Write-Host "Downloading Maven Wrapper..."
-    New-Item -ItemType Directory -Force -Path ".mvn\wrapper" | Out-Null
-    $url = "https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar"
-    Invoke-WebRequest -Uri $url -OutFile ".mvn\wrapper\maven-wrapper.jar"
+# Create virtual environment if it doesn't exist
+if (-not (Test-Path "venv")) {
+    Write-Host "Creating Python virtual environment..." -ForegroundColor Cyan
+    python -m venv venv
 }
 
-# Run Spring Boot
-Write-Host "Starting AssetGuardian Backend (PostgreSQL)..." -ForegroundColor Cyan
-$root = Get-Location
-java "-Dmaven.multiModuleProjectDirectory=$root" -cp ".mvn\wrapper\maven-wrapper.jar" org.apache.maven.wrapper.MavenWrapperMain spring-boot:run
+# Activate virtual environment and install requirements
+Write-Host "Activating virtual environment & installing dependencies..." -ForegroundColor Cyan
+. venv/Scripts/Activate.ps1
+pip install -r requirements.txt
+
+# Run FastAPI backend
+Write-Host "Starting AssetGuardian Backend (FastAPI)..." -ForegroundColor Cyan
+python main.py
